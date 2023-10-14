@@ -1,25 +1,26 @@
+"use strict";
+
 const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   entry: {
-    popup: './src/popup.ts', 
-    content: './src/content.ts', 
+    popup: './src/popup.ts',
   },
   output: {
-    filename: '[name].js', 
-    path: path.resolve(__dirname, 'build')
+    filename: '[name].js',
+    path: path.resolve(__dirname, 'build'),
   },
   module: {
     rules: [
       {
-        test: /\.tsx?$/, 
+        test: /\.ts?$/,
         use: 'ts-loader',
       }
     ]
   },
   resolve: {
-    extensions: ['.ts', '.js'] 
+    extensions: ['.ts', '.js']
   },
   plugins: [
     new CopyWebpackPlugin({
@@ -30,5 +31,8 @@ module.exports = {
         { from: 'icons', to: 'icons' },
       ]
     })
-  ]
+  ],
+  optimization: {
+    minimize: true,
+  },
 };

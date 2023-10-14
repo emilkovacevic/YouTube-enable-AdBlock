@@ -20,7 +20,7 @@ The ad-blocker I like to use can be found [here](https://chrome.google.com/webst
 
 ### Run Only
 
-You can run the extension from the unpacked folder located at `build/unpacked`.
+You can run the extension from the unpacked folder located at `compiled/unpacked`.
 
 **Steps:**
 
@@ -65,7 +65,7 @@ npm install
 npm run build
 ```
 
-5. Follow the steps in the `Run Only` section, but on step 3, make sure to load the extension from the `extension/build` folder, which is generated in the previous step 4.
+5. Follow the steps in the `Run Only` section, but on step 6, make sure to load the extension from the `extension/build` folder, which is generated in the previous step 4.
 
 ```shell
 ├── compiled

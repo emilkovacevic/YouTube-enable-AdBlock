@@ -1,14 +1,21 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>Enable YouTube Ad Blocker</title>
-  <link rel="stylesheet" href="styles/popup.css">
-</head>
-<body>
-  <h1>YouTube AdBlock Enabler</h1>
-  <button id="toggle-extension">Enable</button>
-  <div id="remove-count">Removed Popups: 0</div>
-  <div id="console-log"></div>
-  <script src="popup.js"></script>
-</body>
+  <head>
+    <title>Enable YouTube Ad Blocker</title>
+    <link rel="stylesheet" href="styles/popup.css" />
+    <script defer src="popup.js"></script>
+  </head>
+  <body>
+    <h1>YouTube AdBlock Enabler</h1>
+    <section>
+      <span> Extension</span>
+      <button id="toggle-extension">Disabled</button>
+    </section>
+    <section>
+      <span> Logs</span>
+      <button id="toggle-logs">Disabled</button>
+    </section>
+    <div id="console-log">Logging is disabled. No logs.</div>
+    <div id="remove-count">Removed Popups: 0</div>
+  </body>
 </html>
