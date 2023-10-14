@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "name": "Enable YouTube Ad Blocker",
+  "version": "1.0.0",
+  "description": "A browser extension to enable AdBlockers on YouTube.",
+  "author": "Emil Kovacevic",
+  "action": {
+    "default_title": "Enable YouTube Ad Blocker",
+    "default_popup": "popup.html",
+    "icons": {
+      "48": "icons/icon48.png",
+      "64": "icons/icon64.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "permissions": ["activeTab", "storage", "scripting"],
+  "content_scripts": [
+    {
+      "matches": ["*://*.youtube.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_end"
+    }
+  ],
+  "icons": {
+    "48": "icons/icon48.png",
+    "64": "icons/icon64.png",
+    "128": "icons/icon128.png"
+  }
+}

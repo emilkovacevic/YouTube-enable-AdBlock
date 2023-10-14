@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "CommonJS",
+    "outDir": "../build/build",
+    "rootDir": "./src",
+    "strict": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "lib": ["es6", "dom"],
+    "types": ["chrome"]
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules"]
+}
