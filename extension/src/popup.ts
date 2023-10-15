@@ -15,6 +15,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const titleElement = document.querySelector("title");
   let isExtensionEnabled = true;
   let isLoggingEnabled = false;
+  let removeCount = 0;
+  let observer;
 
   if (
     !toggleButton ||
@@ -22,16 +24,13 @@ document.addEventListener("DOMContentLoaded", () => {
     !consoleLogElement ||
     !removeCountElement
   ) {
-    consoleLogElement.textContent = "Loading error";
+    throw new Error('Loading Error')
   }
 
   function remover() {
     const popups =
-      (document.getElementsByClassName(
-        "ytd-popup-container"
-      ) as HTMLCollectionOf<Element>) || null;
-    const playButton =
-      (document.querySelector("ytp-play-button") as HTMLElement) || null;
+      (document.getElementsByClassName( "ytd-popup-container" ) as HTMLCollectionOf<Element>) || null;
+    const playButton = (document.querySelector("ytp-play-button") as HTMLElement) || null;
 
     if (playButton) {
       const playButtonState = playButton.getAttribute("data-title-no-tooltip");
@@ -44,19 +43,20 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (popups.length === 0) {
-      consoleLogElement.textContent = "%cNo popups found. Exiting...";
+      consoleLogElement.textContent = "No popups found. Exiting...";
       return;
     }
 
     consoleLogElement.textContent = `Found ${popups.length} popups`;
+
+    removeCount += popups.length;
+    chrome.storage.local.set({ removeCount: removeCount });
 
     for (const popup of popups) {
       consoleLogElement.textContent = "Removed popup...";
       consoleLogElement.textContent = popup.toString();
       popup.remove();
     }
-
-    // debug message
     consoleLogElement.textContent = "Popup cleanup finished!";
     consoleLogElement.textContent = "Event monitoring started...";
   }
@@ -74,8 +74,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  let observer;
-
   function startObserver() {
     if (isExtensionEnabled && titleElement) {
       observer = createObserver();
@@ -87,8 +85,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  startObserver();
-
+  
   function updateButtonState(enabled: boolean, button: HTMLButtonElement) {
     const buttonText = enabled ? "Enabled" : "Disabled";
     button.innerText = buttonText;
@@ -98,30 +95,29 @@ document.addEventListener("DOMContentLoaded", () => {
     if (isLoggingEnabled) {
       consoleLogElement.style.display = "block";
       consoleLogElement.textContent =
-        "Logging is enabled. Logs will be shown here.";
+      "Logging is enabled. Logs will be shown here.";
     } else {
       consoleLogElement.style.display = "none";
     }
   }
 
+  chrome.storage.local.get(["removeCount"], (result) => {
+    removeCount = result.removeCount || 0;
+  });
+  
+
   toggleButton.addEventListener("click", () => {
-    chrome.storage.local.get(["extensionEnabled"], (result) => {
-      isExtensionEnabled = result.extensionEnabled !== false;
-      isExtensionEnabled = !isExtensionEnabled;
-      chrome.storage.local.set({ extensionEnabled: isExtensionEnabled }, () => {
-        updateButtonState(isExtensionEnabled, toggleButton);
-      });
+    isExtensionEnabled = !isExtensionEnabled;
+    chrome.storage.local.set({ extensionEnabled: isExtensionEnabled }, () => {
+      updateButtonState(isExtensionEnabled, toggleButton);
     });
   });
 
   toggleLogsButton.addEventListener("click", () => {
-    chrome.storage.local.get(["showLogs"], (result) => {
-      isLoggingEnabled = result.showLogs !== false;
-      isLoggingEnabled = !isLoggingEnabled;
-      chrome.storage.local.set({ showLogs: isLoggingEnabled }, () => {
-        updateButtonState(isLoggingEnabled, toggleLogsButton);
-        updateLogsText(isLoggingEnabled);
-      });
+    isLoggingEnabled = !isLoggingEnabled;
+    chrome.storage.local.set({ showLogs: isLoggingEnabled }, () => {
+      updateButtonState(isLoggingEnabled, toggleLogsButton);
+      updateLogsText(isLoggingEnabled);
     });
   });
 
@@ -130,14 +126,16 @@ document.addEventListener("DOMContentLoaded", () => {
     (result) => {
       isExtensionEnabled = result.extensionEnabled !== false;
       isLoggingEnabled = result.showLogs !== false;
-
+  
       updateButtonState(isExtensionEnabled, toggleButton);
       updateButtonState(isLoggingEnabled, toggleLogsButton);
       updateLogsText(isLoggingEnabled);
-
+  
       removeCountElement.textContent = `Removed Popups: ${
         result.removeCount || 0
       }`;
     }
-  );
+  );  
+  
+  startObserver();
 });

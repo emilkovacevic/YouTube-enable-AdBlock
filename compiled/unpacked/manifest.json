@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Enable YouTube Ad Blocker",
-  "version": "1.1.0",
+  "version": "1.1.2",
   "description": "A browser extension to enable AdBlockers on YouTube.",
   "author": "Emil Kovacevic",
   "action": {
