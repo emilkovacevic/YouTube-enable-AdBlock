@@ -1,0 +1,1 @@
+(()=>{"use strict";chrome.tabs.onUpdated.addListener(((e,s)=>{s.url&&s.url.includes("youtube.com")&&chrome.tabs.sendMessage(e,{type:"NEW"})}))})();
