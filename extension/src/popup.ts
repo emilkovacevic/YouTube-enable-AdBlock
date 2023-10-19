@@ -42,11 +42,15 @@ document.addEventListener("DOMContentLoaded", async() => {
       let i = 0;
 
       function displayNextMessage() {
+        if(messages.length === i){
+          messages = []
+        }
         if (i < messages.length) {
           consoleLogElement.innerText = messages[i];
           i++;
-          setTimeout(displayNextMessage, 1000);
+          setTimeout(displayNextMessage, 400);
         }
+        
       }
 
       displayNextMessage();
