@@ -1,5 +1,5 @@
 (() => {
-  let isExtensionEnabled: boolean;
+  let isExtensionEnabled = false;
   let observer;
 
   function reset() {
@@ -8,14 +8,14 @@
 
   function sendMessage(message: string) {
     chrome.runtime.sendMessage({ log: message });
-    console.log(message)
+    console.log(message);
   }
 
   function catchPopup() {
+    if (!isExtensionEnabled) return;
+
     const youtubePopups = document.querySelectorAll("ytd-popup-container");
-    const playButton = document.querySelector(
-      ".ytp-play-button"
-    ) as HTMLElement;
+    const playButton = document.querySelector(".ytp-play-button") as HTMLElement;
 
     if (playButton) {
       const playButtonState = playButton.getAttribute("data-title-no-tooltip");
@@ -27,7 +27,7 @@
         sendMessage("Playing the video...");
       }
     }
-    
+
     if (youtubePopups.length === 0) {
       sendMessage("No popups...");
       return;
@@ -63,27 +63,33 @@
     });
 
     if (isExtensionEnabled) {
-      sendMessage('Listening to events')
+      sendMessage("Listening to events");
       observer.observe(document.body, { childList: true, subtree: true });
     } else {
-      sendMessage('Not listening to events')
+      sendMessage("Not listening to events");
       observer.disconnect();
     }
   }
 
-  chrome.runtime.onMessage.addListener((message) => {
-    isExtensionEnabled = message === "on";
-  });
-
-  chrome.runtime.onMessage.addListener((obj) => {
-    const { type } = obj
-    if (isExtensionEnabled && type === "NEW") {
-      catchPopup();
-    } else {
+  chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    if (message.contentScriptMessage === "on") {
+      isExtensionEnabled = true;
+      sendMessage("Enabled true");
+      catchPopup(); // Initialize and set up event listeners when enabled
+    } else if (message.contentScriptMessage === "off") {
       isExtensionEnabled = false;
       reset();
+      sendMessage("Enabled false");
     }
   });
 
-  catchPopup();
+  chrome.runtime.onMessage.addListener((obj) => {
+    const { type } = obj;
+    if (isExtensionEnabled) {
+      if (type === "NEW") {
+        sendMessage("New video loaded");
+        catchPopup(); // Reinitialize event listeners for the new video
+      }
+    }
+  });
 })();
